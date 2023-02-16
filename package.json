@@ -1,5 +1,5 @@
 {
-  "name": "web3-frontend-template",
+  "name": "treasure-gov-staking",
   "private": true,
   "description": "",
   "license": "",
@@ -21,6 +21,7 @@
     "@remix-run/node": "^1.13.0",
     "@remix-run/react": "^1.13.0",
     "@remix-run/serve": "^1.13.0",
+    "@treasure-project/tailwind-config": "^1.0.0",
     "buffer-polyfill": "npm:buffer@^6.0.3",
     "ethers": "^5.7.0",
     "graphql": "^16.6.0",

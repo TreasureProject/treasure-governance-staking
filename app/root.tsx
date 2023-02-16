@@ -17,8 +17,8 @@ import {
   ScrollRestoration,
 } from "@remix-run/react";
 import { resolveValue, Toaster } from "react-hot-toast";
-import { mainnet, createClient, configureChains, WagmiConfig } from "wagmi";
-import { optimism, arbitrum, polygon, arbitrumGoerli } from "wagmi/chains";
+import { createClient, configureChains, WagmiConfig } from "wagmi";
+import { arbitrum, arbitrumGoerli } from "wagmi/chains";
 import { alchemyProvider } from "wagmi/providers/alchemy";
 import { publicProvider } from "wagmi/providers/public";
 import {
@@ -52,9 +52,11 @@ export const links: LinksFunction = () => [
 
 export const meta: MetaFunction = () => ({
   charset: "utf-8",
-  title: "Web3 Frontend Starter Template",
+  title: "TreasureDAO Governance Staking",
   viewport: "width=device-width,initial-scale=1",
 });
+
+type LoaderData = { ENV: Env };
 
 const strictEntries = <T extends Record<string, any>>(
   object: T
@@ -72,23 +74,25 @@ function getPublicKeys(env: Env): Env {
   return publicKeys;
 }
 
-export const loader = async () => {
-  return json({
+export const loader: LoaderFunction = async () => {
+  return json<LoaderData>({
     ENV: getPublicKeys(process.env),
   });
 };
 
 export default function App() {
-  const { ENV } = useLoaderData<typeof loader>();
+  const { ENV } = useLoaderData<LoaderData>();
 
   const [{ client, chains }] = useState(() => {
     const testChains =
       ENV.PUBLIC_ENABLE_TESTNETS === "true" ? [arbitrumGoerli] : [];
 
     const { chains, provider } = configureChains(
-      // Configure this to chains you want
-      [mainnet, optimism, polygon, arbitrum, ...testChains],
-      [alchemyProvider({ apiKey: ENV.PUBLIC_ALCHEMY_KEY }), publicProvider()]
+      [arbitrum, ...testChains],
+      [
+        // alchemyProvider({ apiKey: ENV.PUBLIC_ALCHEMY_KEY }),
+        publicProvider(),
+      ]
     );
 
     const { wallets } = getDefaultWallets({
@@ -140,7 +144,7 @@ export default function App() {
         <Meta />
         <Links />
       </head>
-      <body className="antialiased">
+      <body className="bg-honey-25 antialiased selection:bg-honey-900">
         <WagmiConfig client={client}>
           <RainbowKitProvider chains={chains}>
             <Outlet />
