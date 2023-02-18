@@ -41,7 +41,10 @@ import rainbowStyles from "@rainbow-me/rainbowkit/styles.css";
 import styles from "./styles/tailwind.css";
 import nProgressStyles from "./styles/nprogress.css";
 
+import LogoImg from "~/assets/logo.webp";
+
 import type { Env } from "./types";
+import { ClientOnly } from "remix-utils";
 
 export const links: LinksFunction = () => [
   { rel: "stylesheet", href: styles },
@@ -145,7 +148,12 @@ export default function App() {
         <div className="border-2 border-t border-ruby-900" />
         <WagmiConfig client={client}>
           <RainbowKitProvider chains={chains}>
-            <Outlet />
+            <img
+              src={LogoImg}
+              className="fixed top-8 left-8 h-12 w-auto"
+              alt="TreasureDAO Logo"
+            />
+            <ClientOnly>{() => <Outlet />}</ClientOnly>
           </RainbowKitProvider>
         </WagmiConfig>
         <Toaster position="bottom-left" reverseOrder={false} gutter={18}>

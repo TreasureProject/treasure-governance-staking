@@ -89,7 +89,6 @@ export default function Index() {
 
   const empty = parsedValue === 0;
 
-  console.log(deposits);
   // const { config: withdrawAllConfig } = usePrepareContractWrite({
   //   ...governanceContract,
   //   functionName: "withdrawAll",
@@ -98,44 +97,6 @@ export default function Index() {
   // const { write: withdrawAll } = useContractWrite(withdrawAllConfig);
 
   return (
-    // <div className="max-w-6xl px-6 py-4">
-    //   <header className="flex items-center justify-between">
-    //     TreasureDAO
-    //     {isConnected ? <div>{balance} MAGIC</div> : <ConnectButton />}
-    //   </header>
-    //   <div>
-    //     <div>
-    //       <inpu/t
-    //         className="rounded border border-ruby-500"
-    //         type="text"
-    //         value={amount}
-    //         onChange={(e) => setAmount(e.target.value)}
-    //       />
-    //       <button onClick={() => (isApproved ? deposit?.() : approve?.())}>
-    //         Stake
-    //       </button>
-    //     </div>
-    //     {deposits.length > 0 && (
-    //       <ol>
-    //         {deposits.map(({ depositId, amount, unlockTimestamp }, i) => (
-    //           <li key={depositId.toNumber()}>
-    //             {parseFloat(formatEther(amount))} MAGIC locked until{" "}
-    //             {unlockTimestamp} &bull;{" "}
-    //             <button
-    //               onClick={() =>
-    //                 withdraw?.({
-    //                   recklesslySetUnpreparedArgs: [depositId, amount],
-    //                 })
-    //               }
-    //             >
-    //               Withdraw
-    //             </button>
-    //           </li>
-    //         ))}
-    //       </ol>
-    //     )}
-    //   </div>
-    // </div>
     <div className="relative flex min-h-full flex-col justify-center py-48 px-6 lg:px-8">
       <div className="sm:mx-auto sm:w-full sm:max-w-md">
         <h2 className="mt-6 text-center text-3xl font-bold tracking-tight text-honey-200">
