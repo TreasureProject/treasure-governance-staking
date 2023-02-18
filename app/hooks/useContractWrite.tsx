@@ -23,12 +23,18 @@ const renderStatusWithHeader = (message: string, headerMessage?: string) => {
 
 // A wrapper for useContractWriteWagmi that adds a toast notification
 export const useContractWrite = (
-  statusHeader: Optional<string>,
+  options: {
+    statusHeader?: string;
+    onChange?: () => Promise<void>;
+  },
   ...args: UseContractWriteArgs
 ) => {
   const result = useContractWriteWagmi(...args);
 
-  const transaction = useWaitForTransaction({ hash: result.data?.hash });
+  const transaction = useWaitForTransaction({
+    hash: result.data?.hash,
+    onSuccess: () => options.onChange?.(),
+  });
 
   const toastId = useRef<Optional<string>>(undefined);
 
@@ -42,29 +48,38 @@ export const useContractWrite = (
     if (isLoading) {
       if (toastId.current) {
         toast.loading(
-          renderStatusWithHeader("Transaction in progress...", statusHeader),
+          renderStatusWithHeader(
+            "Transaction in progress...",
+            options.statusHeader
+          ),
           {
             id: toastId.current,
           }
         );
       } else {
         toastId.current = toast.loading(
-          renderStatusWithHeader("Transaction in progress...", statusHeader)
+          renderStatusWithHeader(
+            "Transaction in progress...",
+            options.statusHeader
+          )
         );
       }
     } else if (transaction.status === "success") {
       toast.success(
-        renderStatusWithHeader("Transaction successful", statusHeader),
+        renderStatusWithHeader("Transaction successful", options.statusHeader),
         {
           id: toastId.current,
         }
       );
     } else if (isError) {
-      toast.error(renderStatusWithHeader("Transaction failed", statusHeader), {
-        id: toastId.current,
-      });
+      toast.error(
+        renderStatusWithHeader("Transaction failed", options.statusHeader),
+        {
+          id: toastId.current,
+        }
+      );
     }
-  }, [isError, isLoading, statusHeader, transaction.status]);
+  }, [isError, isLoading, options.statusHeader, transaction.status]);
 
   return {
     ...result,

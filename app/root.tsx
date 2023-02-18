@@ -19,7 +19,6 @@ import {
 import { resolveValue, Toaster } from "react-hot-toast";
 import { createClient, configureChains, WagmiConfig } from "wagmi";
 import { arbitrum, arbitrumGoerli } from "wagmi/chains";
-import { alchemyProvider } from "wagmi/providers/alchemy";
 import { publicProvider } from "wagmi/providers/public";
 import {
   connectorsForWallets,
@@ -56,8 +55,6 @@ export const meta: MetaFunction = () => ({
   viewport: "width=device-width,initial-scale=1",
 });
 
-type LoaderData = { ENV: Env };
-
 const strictEntries = <T extends Record<string, any>>(
   object: T
 ): [keyof T, T[keyof T]][] => {
@@ -75,13 +72,13 @@ function getPublicKeys(env: Env): Env {
 }
 
 export const loader: LoaderFunction = async () => {
-  return json<LoaderData>({
+  return json({
     ENV: getPublicKeys(process.env),
   });
 };
 
 export default function App() {
-  const { ENV } = useLoaderData<LoaderData>();
+  const { ENV } = useLoaderData<typeof loader>();
 
   const [{ client, chains }] = useState(() => {
     const testChains =
@@ -144,7 +141,8 @@ export default function App() {
         <Meta />
         <Links />
       </head>
-      <body className="bg-honey-25 antialiased selection:bg-honey-900">
+      <body className="bg-night-900 antialiased selection:bg-honey-900">
+        <div className="border-2 border-t border-ruby-900" />
         <WagmiConfig client={client}>
           <RainbowKitProvider chains={chains}>
             <Outlet />

@@ -1,4 +1,4 @@
-import type { BigNumber } from "ethers";
+import { BigNumber } from "ethers";
 import { useAccount, useContractRead, useContractReads } from "wagmi";
 import { governanceABI } from "~/artifacts/governance";
 import { AppContract } from "~/const";
@@ -21,6 +21,7 @@ export const useDeposits = () => {
     functionName: "getAllUserDepositIds",
     args: [address ?? "0x0"],
     enabled: !!address,
+    keepPreviousData: true,
   });
 
   const {
@@ -34,18 +35,22 @@ export const useDeposits = () => {
       args: [address ?? "0x0", depositId],
     })),
     enabled: depositIds.length > 0,
+    keepPreviousData: true,
   });
 
+  console.log(rawDeposits);
   const deposits = (
     rawDeposits as {
       depositAmount: BigNumber;
       lockedUntil: BigNumber;
     }[]
-  ).map(({ depositAmount, lockedUntil }, i) => ({
-    depositId: depositIds[i],
-    amount: depositAmount,
-    unlockTimestamp: lockedUntil.toNumber(),
-  }));
+  )
+    .map(({ depositAmount, lockedUntil }, i) => ({
+      depositId: depositIds[i] ?? BigNumber.from(0),
+      amount: depositAmount,
+      unlockTimestamp: lockedUntil.toNumber(),
+    }))
+    .sort((a, b) => b.unlockTimestamp - a.unlockTimestamp);
 
   return {
     deposits,
