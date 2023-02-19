@@ -32,11 +32,7 @@ import NProgress from "nprogress";
 
 import { Transition } from "@headlessui/react";
 
-import {
-  CheckCircleIcon,
-  ExclamationCircleIcon,
-  SpinnerIcon,
-} from "./components/Icons";
+import { SpinnerIcon } from "./components/Icons";
 
 import rainbowStyles from "@rainbow-me/rainbowkit/styles.css";
 import styles from "./styles/styles.css";
@@ -46,6 +42,10 @@ import nProgressStyles from "./styles/nprogress.css";
 import type { Env } from "./types";
 import { ClientOnly } from "remix-utils";
 import { Header } from "./components/Header";
+import {
+  CheckCircleIcon,
+  ExclamationCircleIcon,
+} from "@heroicons/react/24/outline";
 
 export const links: LinksFunction = () => [
   { rel: "stylesheet", href: styles },

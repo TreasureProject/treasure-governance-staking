@@ -27,28 +27,6 @@ const createIcon = ({
   return Comp;
 };
 
-export const ExclamationCircleIcon = createIcon({
-  path: (
-    <path
-      stroke-linecap="round"
-      stroke-linejoin="round"
-      d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
-    />
-  ),
-  displayName: "ExclamationCircleIcon",
-});
-
-export const CheckCircleIcon = createIcon({
-  path: (
-    <path
-      stroke-linecap="round"
-      stroke-linejoin="round"
-      d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"
-    />
-  ),
-  displayName: "CheckCircleIcon",
-});
-
 export const SpinnerIcon = createIcon({
   path: (
     <>
