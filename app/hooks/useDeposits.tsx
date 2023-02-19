@@ -38,7 +38,6 @@ export const useDeposits = () => {
     keepPreviousData: true,
   });
 
-  console.log(rawDeposits);
   const deposits = (
     rawDeposits as {
       depositAmount: BigNumber;

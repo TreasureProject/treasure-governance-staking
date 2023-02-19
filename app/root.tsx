@@ -21,8 +21,11 @@ import { createClient, configureChains, WagmiConfig } from "wagmi";
 import { arbitrum, arbitrumGoerli } from "wagmi/chains";
 import { publicProvider } from "wagmi/providers/public";
 import {
+  ConnectButton,
   connectorsForWallets,
+  darkTheme,
   getDefaultWallets,
+  midnightTheme,
   RainbowKitProvider,
 } from "@rainbow-me/rainbowkit";
 import { trustWallet, ledgerWallet } from "@rainbow-me/rainbowkit/wallets";
@@ -38,7 +41,8 @@ import {
 } from "./components/Icons";
 
 import rainbowStyles from "@rainbow-me/rainbowkit/styles.css";
-import styles from "./styles/tailwind.css";
+import styles from "./styles/styles.css";
+import tailwindStyles from "./styles/tailwind.css";
 import nProgressStyles from "./styles/nprogress.css";
 
 import LogoImg from "~/assets/logo.webp";
@@ -48,6 +52,7 @@ import { ClientOnly } from "remix-utils";
 
 export const links: LinksFunction = () => [
   { rel: "stylesheet", href: styles },
+  { rel: "stylesheet", href: tailwindStyles },
   { rel: "stylesheet", href: nProgressStyles },
   { rel: "stylesheet", href: rainbowStyles },
 ];
@@ -144,15 +149,28 @@ export default function App() {
         <Meta />
         <Links />
       </head>
-      <body className="bg-night-900 antialiased selection:bg-honey-900">
-        <div className="border-2 border-t border-ruby-900" />
+      <body className="border-t-2 border-ruby-900 bg-night-900 antialiased selection:bg-honey-900">
         <WagmiConfig client={client}>
-          <RainbowKitProvider chains={chains}>
-            <img
-              src={LogoImg}
-              className="fixed top-8 left-8 h-12 w-auto"
-              alt="TreasureDAO Logo"
-            />
+          <RainbowKitProvider
+            chains={chains}
+            theme={darkTheme({
+              accentColor: "#DC2626",
+            })}
+          >
+            <div className="flex items-center justify-between px-8 pt-4 pb-2">
+              <img
+                src={LogoImg}
+                className="h-12 w-auto"
+                alt="TreasureDAO Logo"
+              />
+              <ConnectButton
+                showBalance={false}
+                chainStatus={{
+                  largeScreen: "none",
+                  smallScreen: "none",
+                }}
+              />
+            </div>
             <ClientOnly>{() => <Outlet />}</ClientOnly>
           </RainbowKitProvider>
         </WagmiConfig>

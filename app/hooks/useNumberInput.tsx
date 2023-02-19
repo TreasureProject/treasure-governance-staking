@@ -40,7 +40,6 @@ export const useNumberInput = ({ value, onChange }: Props) => {
         .replace(/\./g, (match) => (++periodMatches > 1 ? "" : match)); // Replace all periods after the first one
 
       let numberValue = parseFloat(nextInputValue);
-      console.log(nextInputValue);
       if (Number.isNaN(numberValue)) {
         numberValue = 0;
         nextInputValue = "";

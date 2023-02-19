@@ -1,21 +1,20 @@
-import { ConnectButton } from "@rainbow-me/rainbowkit";
 import { BigNumber } from "ethers";
 import { formatEther, parseEther } from "ethers/lib/utils.js";
 import { useState } from "react";
-import { erc20ABI, useAccount, usePrepareContractWrite } from "wagmi";
+import { erc20ABI } from "wagmi";
 import { governanceABI } from "~/artifacts/governance";
 import { AppContract } from "~/const";
 import { useContractAddresses } from "~/hooks/useContractAddress";
 import { useDeposits } from "~/hooks/useDeposits";
 import { useIsMagicApproved } from "~/hooks/useIsMagicApproved";
 import { useMagicBalance } from "~/hooks/useMagicBalance";
-import { useNumberInput } from "~/hooks/useNumberInput";
+import { formatNumber, useNumberInput } from "~/hooks/useNumberInput";
 import MagicTokenImg from "~/assets/magic.webp";
 import { Button } from "~/components/Button";
 import { useContractWrite } from "~/hooks/useContractWrite";
 import { AnimatePresence, motion } from "framer-motion";
-import { format, isAfter } from "date-fns";
 import Balancer from "react-wrap-balancer";
+import { ArrowTopRightOnSquareIcon as ExternalLinkIcon } from "@heroicons/react/24/outline";
 
 export default function Index() {
   const contractAddresses = useContractAddresses();
@@ -97,15 +96,23 @@ export default function Index() {
   // const { write: withdrawAll } = useContractWrite(withdrawAllConfig);
 
   return (
-    <div className="relative flex min-h-full flex-col justify-center py-48 px-6 lg:px-8">
-      <div className="sm:mx-auto sm:w-full sm:max-w-md">
-        <h2 className="mt-6 text-center text-3xl font-bold tracking-tight text-honey-200">
-          Governance Staking
+    <div className="relative flex grow flex-col justify-center px-6 lg:px-8">
+      <div className="sm:mx-auto sm:w-full sm:max-w-lg">
+        <h2 className="text-center text-3xl font-bold tracking-tight text-honey-200">
+          TreasureDAO Governance Staking
         </h2>
         <p className="mt-1.5 text-center text-sm font-semibold text-night-500">
           <Balancer>
-            Stake your MAGIC here for gMagic. Your MAGIC will be locked for 2
-            weeks.
+            Stake your MAGIC with a 14-day lockup period to earn gMAGIC voting
+            power.{" "}
+            <a
+              href="https://docs.treasure.lol/about-treasure/governance"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="flex items-center justify-center gap-1 underline hover:no-underline"
+            >
+              View More Info <ExternalLinkIcon className="h-3 w-3" />
+            </a>
           </Balancer>
         </p>
       </div>
@@ -135,7 +142,7 @@ export default function Index() {
             onClick={() => setAmount(balance)}
             className="text-xs text-night-400 hover:text-night-300"
           >
-            Balance: {balance}
+            Balance: {formatNumber(balance)}
           </button>
         </div>
         <div className="mt-4">
@@ -158,11 +165,15 @@ export default function Index() {
         </div>
       </div>
       {deposits.length > 0 && (
-        <div className="mt-6 rounded-lg border-2 border-night-800 bg-night-100 p-2.5 sm:mx-auto sm:w-full sm:max-w-md">
-          <div className="border-b-2 border-night-200 py-6 text-center">
-            1.1M gMAGIC
+        <div className="mt-6 rounded-lg border-2 border-night-800 bg-night-100 sm:mx-auto sm:w-full sm:max-w-md">
+          <div className="border-b-2 border-night-200 py-4 text-center font-medium">
+            Your Deposits
           </div>
-          <motion.ol initial={{ opacity: 0 }} animate={{ opacity: 1 }}>
+          <motion.ol
+            className="p-2.5"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+          >
             <AnimatePresence initial={false}>
               {deposits.map(({ depositId, amount, unlockTimestamp }, i) => (
                 <Deposit
@@ -194,13 +205,7 @@ const Deposit = ({
   withdraw: () => void;
 }) => {
   const timestamp = Number(unlockTimestamp * 1000);
-
-  const isWithdrawable = () => {
-    const today = new Date();
-    const lockedUntilDate = new Date(timestamp);
-
-    return isAfter(today, lockedUntilDate);
-  };
+  const isWithdrawable = timestamp < Date.now();
 
   return (
     <motion.li
@@ -221,13 +226,13 @@ const Deposit = ({
             <span className="text-xs font-medium">MAGIC</span>
           </div>
           <div className="text-sm">
-            locked until {format(new Date(timestamp), "yyyy-MM-dd HH:mm:ss")}{" "}
+            locked until {new Date(timestamp).toLocaleString("en-US")}{" "}
           </div>
         </div>
         <button
           className="disabled:cursor-not-allowed disabled:opacity-50"
           onClick={() => withdraw()}
-          disabled={!isWithdrawable()}
+          disabled={!isWithdrawable}
         >
           Withdraw
         </button>
