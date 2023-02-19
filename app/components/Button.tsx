@@ -1,8 +1,8 @@
 import { useChainModal, useConnectModal } from "@rainbow-me/rainbowkit";
 import type { ButtonHTMLAttributes, MouseEventHandler } from "react";
-import { useEffect, useState } from "react";
 import { twMerge } from "tailwind-merge";
-import { useAccount, useNetwork } from "wagmi";
+import { useNetwork } from "wagmi";
+import { useIsConnected } from "~/hooks/useIsConnected";
 
 type Props = ButtonHTMLAttributes<HTMLButtonElement> & {
   requiresConnect?: boolean;
@@ -15,17 +15,13 @@ export const Button = ({
   disabled,
   ...buttonProps
 }: Props) => {
-  const [mounted, setMounted] = useState(false);
-  const { address, isConnected } = useAccount();
   const { chain } = useNetwork();
   const { openConnectModal } = useConnectModal();
   const { openChainModal } = useChainModal();
 
-  const connected = mounted && isConnected && !!address;
+  const { isConnected } = useIsConnected();
   const unsupported = chain?.unsupported ?? false;
-  const isConnectButton = !connected || unsupported;
-
-  useEffect(() => setMounted(true), []);
+  const isConnectButton = !isConnected || unsupported;
 
   const handleClick: MouseEventHandler<HTMLButtonElement> = (e) => {
     if (isConnectButton) {

@@ -21,11 +21,9 @@ import { createClient, configureChains, WagmiConfig } from "wagmi";
 import { arbitrum, arbitrumGoerli } from "wagmi/chains";
 import { publicProvider } from "wagmi/providers/public";
 import {
-  ConnectButton,
   connectorsForWallets,
   darkTheme,
   getDefaultWallets,
-  midnightTheme,
   RainbowKitProvider,
 } from "@rainbow-me/rainbowkit";
 import { trustWallet, ledgerWallet } from "@rainbow-me/rainbowkit/wallets";
@@ -45,10 +43,9 @@ import styles from "./styles/styles.css";
 import tailwindStyles from "./styles/tailwind.css";
 import nProgressStyles from "./styles/nprogress.css";
 
-import LogoImg from "~/assets/logo.webp";
-
 import type { Env } from "./types";
 import { ClientOnly } from "remix-utils";
+import { Header } from "./components/Header";
 
 export const links: LinksFunction = () => [
   { rel: "stylesheet", href: styles },
@@ -157,20 +154,7 @@ export default function App() {
               accentColor: "#DC2626",
             })}
           >
-            <div className="flex items-center justify-between px-8 pt-4 pb-2">
-              <img
-                src={LogoImg}
-                className="h-12 w-auto"
-                alt="TreasureDAO Logo"
-              />
-              <ConnectButton
-                showBalance={false}
-                chainStatus={{
-                  largeScreen: "none",
-                  smallScreen: "none",
-                }}
-              />
-            </div>
+            <Header />
             <ClientOnly>{() => <Outlet />}</ClientOnly>
           </RainbowKitProvider>
         </WagmiConfig>
