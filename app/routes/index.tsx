@@ -1,7 +1,7 @@
 import { BigNumber } from "ethers";
 import { formatEther, parseEther } from "ethers/lib/utils.js";
 import { useState } from "react";
-import { erc20ABI } from "wagmi";
+import { erc20ABI, useNetwork } from "wagmi";
 import { governanceABI } from "~/artifacts/governance";
 import { AppContract } from "~/const";
 import { useContractAddresses } from "~/hooks/useContractAddress";
@@ -19,6 +19,7 @@ import { ArrowTopRightOnSquareIcon as ExternalLinkIcon } from "@heroicons/react/
 export default function Index() {
   const contractAddresses = useContractAddresses();
   const [amount, setAmount] = useState(0);
+  const { chain } = useNetwork();
   const { balance, refetch: refetchMagicBalance } = useMagicBalance();
   const { isApproved, refetch: refetchIsApproved } = useIsMagicApproved();
   const { deposits, refetch: refetchDeposits } = useDeposits();
@@ -105,15 +106,28 @@ export default function Index() {
           <Balancer>
             Stake your MAGIC with a 14-day lockup period to earn gMAGIC voting
             power.{" "}
-            <a
-              href="https://docs.treasure.lol/about-treasure/governance"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="flex items-center justify-center gap-1 underline hover:no-underline"
-            >
-              View More Info <ExternalLinkIcon className="h-3 w-3" />
-            </a>
           </Balancer>
+        </p>
+        <p className="mt-0.5 flex items-center justify-center gap-1.5 text-sm font-semibold text-night-400">
+          <a
+            href={`${
+              chain?.blockExplorers?.default.url ?? "https://arbiscan.io/"
+            }address/${contractAddresses[AppContract.Governance]}`}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="flex items-center justify-center gap-1 transition-colors hover:text-honey-200"
+          >
+            Contract <ExternalLinkIcon className="h-3 w-3" />
+          </a>
+          &bull;
+          <a
+            href="https://docs.treasure.lol/about-treasure/governance"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="flex items-center justify-center gap-1 transition-colors hover:text-honey-200"
+          >
+            Docs <ExternalLinkIcon className="h-3 w-3" />
+          </a>
         </p>
       </div>
       <div className="mt-12 sm:mx-auto sm:w-full sm:max-w-md">
