@@ -25,6 +25,9 @@ jobs:
       - name: 📥 Download deps
         uses: bahmutov/npm-install@v1
 
+      - name: Generate code
+        run: npm run codegen
+
       - name: 🔎 Type check
         run: npm run typecheck --if-present
   build:
