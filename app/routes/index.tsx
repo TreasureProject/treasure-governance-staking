@@ -108,7 +108,7 @@ export default function Index() {
             power.{" "}
           </Balancer>
         </p>
-        <p className="mt-0.5 flex items-center justify-center gap-1.5 text-sm font-semibold text-night-400">
+        <p className="mt-1.5 flex items-center justify-center gap-1.5 text-sm font-semibold text-night-400">
           <a
             href={`${
               chain?.blockExplorers?.default.url ?? "https://arbiscan.io/"

@@ -35,7 +35,6 @@ import { Transition } from "@headlessui/react";
 import { SpinnerIcon } from "./components/Icons";
 
 import rainbowStyles from "@rainbow-me/rainbowkit/styles.css";
-import styles from "./styles/styles.css";
 import tailwindStyles from "./styles/tailwind.css";
 import nProgressStyles from "./styles/nprogress.css";
 
@@ -48,7 +47,6 @@ import {
 } from "@heroicons/react/24/outline";
 
 export const links: LinksFunction = () => [
-  { rel: "stylesheet", href: styles },
   { rel: "stylesheet", href: tailwindStyles },
   { rel: "stylesheet", href: nProgressStyles },
   { rel: "stylesheet", href: rainbowStyles },
