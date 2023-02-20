@@ -151,7 +151,7 @@ export default function App() {
             })}
           >
             <Header />
-            <ClientOnly>{() => <Outlet />}</ClientOnly>
+            <Outlet />
           </RainbowKitProvider>
         </WagmiConfig>
         <Toaster position="bottom-left" reverseOrder={false} gutter={18}>

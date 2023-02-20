@@ -1,6 +1,6 @@
 overwrite: true
 generates:
-  ./app/graphql/exchange.generated.ts:
+  ./generated/app.generated.ts:
     schema: ${EXCHANGE_ENDPOINT}
     documents: "./app/graphql/app.queries.ts"
     plugins:

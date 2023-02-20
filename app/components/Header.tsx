@@ -21,7 +21,7 @@ export const Header = () => {
   });
 
   return (
-    <div className="flex items-center justify-between px-8 pt-4 pb-2">
+    <div className="flex items-center justify-between px-6 pt-4 pb-2 lg:px-8">
       <img src={LogoImg} className="h-12 w-auto" alt="TreasureDAO Logo" />
       <div className="flex flex-col-reverse items-end gap-1 sm:flex-row sm:items-center">
         {isConnected && (
