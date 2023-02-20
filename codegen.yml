@@ -1,7 +1,7 @@
 overwrite: true
 generates:
   ./generated/app.generated.ts:
-    schema: ${EXCHANGE_ENDPOINT}
+    schema: ${SNAPSHOT_API_URL}
     documents: "./app/graphql/app.queries.ts"
     plugins:
       - "typescript"

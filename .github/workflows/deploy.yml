@@ -67,6 +67,8 @@ jobs:
 
       - name: 🐳 Docker build
         uses: docker/build-push-action@v2
+        env:
+          SNAPSHOT_API_URL: ${{ secrets.SNAPSHOT_API_URL }}
         with:
           context: .
           push: true
