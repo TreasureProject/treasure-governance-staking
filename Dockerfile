@@ -38,7 +38,13 @@ COPY --from=deps /app/node_modules /app/node_modules
 # RUN npx prisma generate
 
 ADD . .
+
+# Run code generation
+ARG SNAPSHOT_API_URL
+ENV SNAPSHOT_API_URL ${SNAPSHOT_API_URL}
 RUN npm run codegen
+
+# Create build
 RUN npm run build
 
 # Finally, build the production image with minimal footprint
