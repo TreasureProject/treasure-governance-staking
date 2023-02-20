@@ -27,6 +27,8 @@ jobs:
 
       - name: Generate code
         run: npm run codegen
+        env:
+          SNAPSHOT_API_URL: ${{ secrets.SNAPSHOT_API_URL }}
 
       - name: 🔎 Type check
         run: npm run typecheck --if-present
