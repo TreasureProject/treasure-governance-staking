@@ -20,6 +20,7 @@ import { resolveValue, Toaster } from "react-hot-toast";
 import { createClient, configureChains, WagmiConfig } from "wagmi";
 import { arbitrum, arbitrumGoerli } from "wagmi/chains";
 import { publicProvider } from "wagmi/providers/public";
+import { alchemyProvider } from "wagmi/providers/alchemy";
 import {
   connectorsForWallets,
   darkTheme,
@@ -89,14 +90,11 @@ export default function App() {
 
     const { chains, provider } = configureChains(
       [arbitrum, ...testChains],
-      [
-        // alchemyProvider({ apiKey: ENV.PUBLIC_ALCHEMY_KEY }),
-        publicProvider(),
-      ]
+      [alchemyProvider({ apiKey: ENV.PUBLIC_ALCHEMY_KEY }), publicProvider()]
     );
 
     const { wallets } = getDefaultWallets({
-      appName: "Template App",
+      appName: "TreasureDAO Governance Staking",
       chains,
     });
 
