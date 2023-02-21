@@ -1,6 +1,6 @@
-# Web3 Frontend Starter Template
+# TreasureDAO Governance Staking
 
-This is an opiniated web3 frontend starter template from TreasureDAO.
+Temporary site for staking MAGIC to earning gMAGIC voting power used in TreasureDAO Snapshot voting.
 
 ## Tech Stack
 
