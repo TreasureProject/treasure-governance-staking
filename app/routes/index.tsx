@@ -120,12 +120,12 @@ export default function Index() {
   // const { write: withdrawAll } = useContractWrite(withdrawAllConfig);
 
   return (
-    <div className="relative flex grow flex-col justify-center px-6 lg:px-8">
+    <div className="relative flex grow flex-col justify-center px-6 py-4 sm:py-0 lg:px-8">
       <div className="sm:mx-auto sm:w-full sm:max-w-lg">
-        <h2 className="text-center text-2xl font-bold tracking-tight text-honey-200 sm:text-3xl">
-          TreasureDAO Governance Staking
+        <h2 className="mt-8 text-center text-xl font-bold tracking-tight text-honey-200 sm:mt-0 sm:text-3xl">
+          <Balancer>TreasureDAO Governance Staking</Balancer>
         </h2>
-        <p className="mt-1.5 text-center text-sm font-semibold text-night-500">
+        <p className="mt-1.5 text-center text-xs font-semibold text-night-500">
           <Balancer>
             Stake your MAGIC with a 14-day lockup period to earn gMAGIC voting
             power.{" "}
@@ -215,14 +215,18 @@ export default function Index() {
         </div>
         {data ? (
           <div className="mt-4">
-            <p className="font-semibold text-honey-400">Latest Proposal</p>
+            <p className="text-sm font-semibold text-honey-400 sm:text-base">
+              Latest Proposal
+            </p>
             <a
               href={data?.link || ""}
               target="_blank"
               rel="noopener noreferrer"
             >
               <div className="mt-2 flex items-center justify-between font-medium leading-6 text-night-100">
-                <span className="truncate">{data.title}</span>
+                <span className="truncate text-sm sm:text-base">
+                  {data.title}
+                </span>
                 <span
                   className={twMerge(
                     "ml-2 inline-flex items-center rounded-full bg-red-200 px-2.5 py-0.5 text-xs font-medium uppercase text-red-900",
@@ -232,7 +236,7 @@ export default function Index() {
                   {data.state === "active" ? "Active" : "Closed"}
                 </span>
               </div>
-              <p className="mt-1 truncate text-xs text-night-200">
+              <p className="mt-1 truncate text-xs text-night-200 sm:text-xs">
                 {data.body}
               </p>
             </a>

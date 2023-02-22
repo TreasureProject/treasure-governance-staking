@@ -199,6 +199,7 @@ export default function App() {
         <link rel="mask-icon" href="/safari-pinned-tab.svg" color="#5bbad5" />
         <meta name="msapplication-TileColor" content="#ffc40d" />
         <meta name="theme-color" content="#ffffff" />
+        <meta name="viewport" content="width=device-width,initial-scale=1" />
         <Links />
       </head>
       <body className="border-t-2 border-ruby-900 bg-night-900 antialiased selection:bg-honey-900">
