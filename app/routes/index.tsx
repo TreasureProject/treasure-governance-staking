@@ -15,10 +15,7 @@ import { Button } from "~/components/Button";
 import { useContractWrite } from "~/hooks/useContractWrite";
 import { AnimatePresence, motion } from "framer-motion";
 import Balancer from "react-wrap-balancer";
-import {
-  ArrowTopRightOnSquareIcon as ExternalLinkIcon,
-  ChevronRightIcon,
-} from "@heroicons/react/24/outline";
+import { ArrowTopRightOnSquareIcon as ExternalLinkIcon } from "@heroicons/react/24/outline";
 import client from "~/lib/client";
 import { useLoaderData } from "@remix-run/react";
 import { ClientOnly } from "remix-utils";

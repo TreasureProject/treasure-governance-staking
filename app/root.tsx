@@ -139,7 +139,66 @@ export default function App() {
   return (
     <html lang="en">
       <head>
-        <Meta />
+        <title>TreasureDAO Governance Staking</title>
+        <meta
+          name="description"
+          content="Stake your MAGIC with a 14-day lockup period to earn gMAGIC voting power."
+        />
+
+        <meta
+          property="og:url"
+          content="https://governance-staking.treasure.lol"
+        />
+        <meta property="og:type" content="website" />
+        <meta property="og:title" content="TreasureDAO Governance Staking" />
+        <meta
+          property="og:description"
+          content="Stake your MAGIC with a 14-day lockup period to earn gMAGIC voting power."
+        />
+        <meta
+          property="og:image"
+          content="https://governance-staking.treasure.lol/banner.jpg"
+        />
+
+        <meta name="twitter:card" content="summary_large_image" />
+        <meta
+          property="twitter:domain"
+          content="governance-staking.treasure.lol"
+        />
+        <meta
+          property="twitter:url"
+          content="https://governance-staking.treasure.lol"
+        />
+        <meta name="twitter:title" content="TreasureDAO Governance Staking" />
+        <meta
+          name="twitter:description"
+          content="Stake your MAGIC with a 14-day lockup period to earn gMAGIC voting power."
+        />
+        <meta
+          name="twitter:image"
+          content="https://governance-staking.treasure.lol/banner.jpg"
+        />
+        <link
+          rel="apple-touch-icon"
+          sizes="180x180"
+          href="/apple-touch-icon.png"
+        />
+        <link
+          rel="icon"
+          type="image/png"
+          sizes="32x32"
+          href="/favicon-32x32.png"
+        />
+        <link
+          rel="icon"
+          type="image/png"
+          sizes="16x16"
+          href="/favicon-16x16.png"
+        />
+        <link rel="manifest" href="/site.webmanifest" />
+        <link rel="mask-icon" href="/safari-pinned-tab.svg" color="#5bbad5" />
+        <meta name="msapplication-TileColor" content="#ffc40d" />
+        <meta name="theme-color" content="#ffffff" />
         <Links />
       </head>
       <body className="border-t-2 border-ruby-900 bg-night-900 antialiased selection:bg-honey-900">
