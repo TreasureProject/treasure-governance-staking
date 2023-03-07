@@ -241,7 +241,7 @@ export default function Index() {
               </p>
             </a>
             <a
-              href="https://snapshot.org/#/treasuregaming.eth"
+              href="https://snapshot.org/#/treasuredao.eth"
               target="_blank"
               rel="noopener noreferrer"
               className="mt-1.5 ml-auto block w-fit text-xs font-medium text-honey-500 underline underline-offset-2 accent-yellow-500"

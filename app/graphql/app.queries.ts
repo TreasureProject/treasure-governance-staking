@@ -5,7 +5,7 @@ export const hello = gql`
     proposals(
       first: 5
       skip: 0
-      where: { space: "treasuregaming.eth" }
+      where: { space: "treasuredao.eth" }
       orderBy: "created"
       orderDirection: desc
     ) {
