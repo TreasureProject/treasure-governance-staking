@@ -138,7 +138,8 @@ export default function Index() {
               <>
                 <a
                   href={`${
-                    chain?.blockExplorers?.default.url ?? "https://arbiscan.io/"
+                    chain?.blockExplorers?.default.url + "/" ??
+                    "https://arbiscan.io/"
                   }address/${contractAddresses[AppContract.Governance]}`}
                   target="_blank"
                   rel="noopener noreferrer"
