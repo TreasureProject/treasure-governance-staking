@@ -231,7 +231,7 @@ export default function Index() {
                 <span
                   className={twMerge(
                     "ml-2 inline-flex items-center rounded-full bg-red-200 px-2.5 py-0.5 text-xs font-medium uppercase text-red-900",
-                    data.state === "active" && "bg-honey-100 text-honey-800"
+                    data.state === "active" && "bg-honey-100 text-amber-800"
                   )}
                 >
                   {data.state === "active" ? "Active" : "Closed"}
@@ -242,7 +242,7 @@ export default function Index() {
               </p>
             </a>
             <a
-              href="https://snapshot.org/#/treasuredao.eth"
+              href="https://snapshot.org/#/treasuregaming.eth"
               target="_blank"
               rel="noopener noreferrer"
               className="mt-1.5 ml-auto block w-fit text-xs font-medium text-honey-500 underline underline-offset-2 accent-yellow-500"
