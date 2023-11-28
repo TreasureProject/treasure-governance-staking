@@ -138,9 +138,9 @@ export default function Index() {
               <>
                 <a
                   href={`${
-                    chain?.blockExplorers?.default.url + "/" ??
-                    "https://arbiscan.io/"
-                  }address/${contractAddresses[AppContract.Governance]}`}
+                    chain?.blockExplorers?.default.url.replace(/\/$/, "") ??
+                    "https://arbiscan.io"
+                  }/address/${contractAddresses[AppContract.Governance]}`}
                   target="_blank"
                   rel="noopener noreferrer"
                   className="flex items-center justify-center gap-1 transition-colors hover:text-honey-200"
