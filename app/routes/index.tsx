@@ -127,7 +127,7 @@ export default function Index() {
         </h2>
         <p className="mt-1.5 text-center text-xs font-semibold text-night-500">
           <Balancer>
-            Stake your MAGIC with a 14-day lockup period to earn gMAGIC voting
+            Stake your MAGIC with a 7-day lockup period to earn gMAGIC voting
             power.{" "}
           </Balancer>
         </p>

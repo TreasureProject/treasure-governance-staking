@@ -142,7 +142,7 @@ export default function App() {
         <title>TreasureDAO Governance Staking</title>
         <meta
           name="description"
-          content="Stake your MAGIC with a 14-day lockup period to earn gMAGIC voting power."
+          content="Stake your MAGIC with a 7-day lockup period to earn gMAGIC voting power."
         />
 
         <meta
@@ -153,7 +153,7 @@ export default function App() {
         <meta property="og:title" content="TreasureDAO Governance Staking" />
         <meta
           property="og:description"
-          content="Stake your MAGIC with a 14-day lockup period to earn gMAGIC voting power."
+          content="Stake your MAGIC with a 7-day lockup period to earn gMAGIC voting power."
         />
         <meta
           property="og:image"
@@ -172,7 +172,7 @@ export default function App() {
         <meta name="twitter:title" content="TreasureDAO Governance Staking" />
         <meta
           name="twitter:description"
-          content="Stake your MAGIC with a 14-day lockup period to earn gMAGIC voting power."
+          content="Stake your MAGIC with a 7-day lockup period to earn gMAGIC voting power."
         />
         <meta
           name="twitter:image"
