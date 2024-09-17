@@ -1,44 +1,22 @@
-import { ConnectButton } from "@rainbow-me/rainbowkit";
-import { BigNumber } from "ethers";
-import { formatEther } from "ethers/lib/utils.js";
-import { useContractRead } from "wagmi";
-import { governanceABI } from "~/artifacts/governance";
+import { ConnectKitButton } from "connectkit";
+import { zeroAddress } from "viem";
+
 import LogoImg from "~/assets/logo.webp";
-import { AppContract } from "~/const";
-import { useContractAddress } from "~/hooks/useContractAddress";
+import { useReadGovernanceBalanceOf } from "~/generated";
+import { useContractAddresses } from "~/hooks/useContractAddress";
 import { useIsConnected } from "~/hooks/useIsConnected";
-import { formatNumber } from "~/hooks/useNumberInput";
-
-const NUMBER_ABBREVIATION_LOOKUP = [
-  { value: 1, symbol: "" },
-  { value: 1e3, symbol: "K" },
-  { value: 1e6, symbol: "M" },
-  { value: 1e9, symbol: "G" },
-  { value: 1e12, symbol: "T" },
-  { value: 1e15, symbol: "P" },
-  { value: 1e18, symbol: "E" },
-];
-
-const abbreviateNumber = (value: number, digits = 1): string => {
-  const rx = /\.0+$|(\.[0-9]*[1-9])0+$/;
-  const item = NUMBER_ABBREVIATION_LOOKUP.slice()
-    .reverse()
-    .find((item) => value >= item.value);
-  return item
-    ? (value / item.value).toFixed(digits).replace(rx, "$1") + item.symbol
-    : "0";
-};
+import { formatAmount } from "~/lib/number";
 
 export const Header = () => {
   const { isConnected, address } = useIsConnected();
-  const contractAddress = useContractAddress(AppContract.Governance);
-  const { data: balance = BigNumber.from(0) } = useContractRead({
-    address: contractAddress,
-    abi: governanceABI,
-    functionName: "balanceOf",
-    args: [address ?? "0x0"],
-    enabled: !!address,
-    keepPreviousData: true,
+  const contractAddresses = useContractAddresses();
+
+  const { data: balance = 0n } = useReadGovernanceBalanceOf({
+    address: contractAddresses.Governance,
+    args: [address ?? zeroAddress],
+    query: {
+      enabled: !!address,
+    },
   });
 
   return (
@@ -50,22 +28,11 @@ export const Header = () => {
       />
       <div className="flex items-center gap-1">
         {isConnected && (
-          <div className="rounded-lg bg-[#1A1B1F] p-3 text-xs font-semibold text-white sm:p-2 sm:text-base">
-            gMAGIC Voting Power:{" "}
-            {abbreviateNumber(parseFloat(formatEther(balance)))}
+          <div className="rounded-lg bg-[#1A1B1F] p-3 font-semibold text-white text-xs sm:p-2 sm:text-base">
+            gMAGIC Voting Power: {formatAmount(balance, { type: "compact" })}
           </div>
         )}
-        <ConnectButton
-          showBalance={false}
-          accountStatus={{
-            smallScreen: "avatar",
-            largeScreen: "full",
-          }}
-          chainStatus={{
-            largeScreen: "none",
-            smallScreen: "none",
-          }}
-        />
+        <ConnectKitButton />
       </div>
     </div>
   );

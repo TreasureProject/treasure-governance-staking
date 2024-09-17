@@ -50,7 +50,7 @@ export const loader: LoaderFunction = async () => {
   const sdk = exchangeSdk(url);
 
   return json<LoaderData>({
-    data: await sdk.hello(),
+    data: await sdk.getProposals(),
   });
 };
 
@@ -58,7 +58,7 @@ export const loader: LoaderFunction = async () => {
 export default function Index() {
   const data = useLoaderData<typeof loader>();
 
-  return <div>{data.hello}</div>;
+  return <div>{data.proposals}</div>;
 }
 ```
 

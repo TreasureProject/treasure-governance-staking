@@ -1,8 +1,79 @@
+# flyctl launch added from .gitignore
+
+.cache
+.graphclient
+build
+public/build
+\*\*/.env
+
+# Created by https://www.toptal.com/developers/gitignore/api/react,macos
+
+# Edit at https://www.toptal.com/developers/gitignore?templates=react,macos
+
+### macOS
+
+# General
+
+**/.DS_Store
+**/.AppleDouble
+\*\*/.LSOverride
+
+# Icon must end with two \r
+
+\*\*/Icon
+
+# Thumbnails
+
+\*_/.\__
+
+# Files that might appear in the root of a volume
+
+**/.DocumentRevisions-V100
+**/.fseventsd
+**/.Spotlight-V100
+**/.TemporaryItems
+**/.Trashes
+**/.VolumeIcon.icns
+\*\*/.com.apple.timemachine.donotpresent
+
+# Directories potentially created on remote AFP share
+
+**/.AppleDB
+**/.AppleDesktop
+**/Network Trash Folder
+**/Temporary Items
+\*\*/.apdisk
+
+### macOS Patch
+
+# iCloud generated files
+
+\*_/_.icloud
+
+### react
+
+**/.DS\_\*
+**/_.log
+**/logs
+**/\*\*/_.backup._
+**/**/_.back.\*
+
+**/node_modules
+**/bower_components
+
+\*_/_.sublime\*
+
+**/psd
+**/thumb
+\*\*/sketch
+
+# End of https://www.toptal.com/developers/gitignore/api/react,macos
+
+# flyctl launch added from .husky/.gitignore
+
+.husky/\*\*/\_
+
+# flyctl launch added from .husky/\_/.gitignore
+
+.husky/\_/\*_/_
 fly.toml
-/node_modules
-*.log
-.DS_Store
-.env
-/.cache
-/public/build
-/build

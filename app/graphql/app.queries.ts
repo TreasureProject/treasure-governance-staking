@@ -1,7 +1,7 @@
 import gql from "graphql-tag";
 
-export const hello = gql`
-  query getProposals {
+export const getProposals = gql`
+  query GetProposals {
     proposals(
       first: 5
       skip: 0

@@ -1,67 +1,51 @@
-# base node image
-FROM node:16-bullseye-slim as base
+# syntax = docker/dockerfile:1
 
-# Install openssl for Prisma
-RUN apt-get update && apt-get install -y openssl
+FROM node:20-alpine as base
 
-# Install all node_modules, including dev dependencies
-FROM base as deps
+LABEL fly_launch_runtime="Remix"
 
-RUN mkdir /app
+# Remix app lives here
 WORKDIR /app
 
-ADD package.json package-lock.json ./
-RUN npm install --production=false
+# Set production environment
+ENV NODE_ENV="production"
 
-# Setup production node_modules
-FROM base as production-deps
-
-RUN mkdir /app
-WORKDIR /app
-
-COPY --from=deps /app/node_modules /app/node_modules
-ADD package.json package-lock.json ./
-RUN npm prune --production
-
-# Build the app
+# Throw-away build stage to reduce size of final image
 FROM base as build
 
-ENV NODE_ENV=production
+# Install packages needed to build node modules
+RUN apt-get update -qq && \
+  apt-get install -y build-essential pkg-config python-is-python3 curl
 
-RUN mkdir /app
-WORKDIR /app
+# Copy application code
+COPY --link . .
 
-COPY --from=deps /app/node_modules /app/node_modules
+# Install dependencies
+RUN npm install --include=dev
 
-# If we're using Prisma, uncomment to cache the prisma schema
-# ADD prisma .
-# RUN npx prisma generate
-
-ADD . .
+# Set environment variables
+ARG SNAPSHOT_API_URL
+ENV SNAPSHOT_API_URL=${SNAPSHOT_API_URL}
 
 # Run code generation
-ARG SNAPSHOT_API_URL
-ENV SNAPSHOT_API_URL ${SNAPSHOT_API_URL}
-RUN npm run codegen
+RUN npm run generate
 
-# Create build
+# Build application
 RUN npm run build
 
-# Finally, build the production image with minimal footprint
+# Remove development dependencies
+# Disabled because GraphQL codegen has extra dependencies
+# RUN npm prune --omit=dev
+
+# Final stage for app image
 FROM base
 
-ENV NODE_ENV=production
+# Copy built application
+COPY --from=build /app /app
 
-RUN mkdir /app
-WORKDIR /app
+# Install ca-certificates package to fix TLS verify
+RUN apt-get -y update && apt-get -y install ca-certificates
 
-COPY --from=production-deps /app/node_modules /app/node_modules
-
-# Uncomment if using Prisma
-# COPY --from=build /app/node_modules/.prisma /app/node_modules/.prisma
-
-COPY --from=build /app/build /app/build
-COPY --from=build /app/public /app/public
-ADD . .
-
-CMD ["npm", "run", "start"]
+# Start the server by default, this can be overwritten at runtime
+EXPOSE 3000
+CMD [ "npm", "run", "start" ]

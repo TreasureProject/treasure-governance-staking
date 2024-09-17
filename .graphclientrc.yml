@@ -1,0 +1,12 @@
+sources:
+  - name: snapshot
+    handler:
+      graphql:
+        endpoint: ${SNAPSHOT_API_URL}
+documents:
+  - "./app/graphql/*.{graphql,ts}"
+codegen:
+  scalars:
+    BigDecimal: string
+    BigInt: string
+    Bytes: string

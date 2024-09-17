@@ -1,62 +1,66 @@
-import { BigNumber } from "ethers";
-import { useAccount, useContractRead, useContractReads } from "wagmi";
-import { governanceABI } from "~/artifacts/governance";
-import { AppContract } from "~/const";
-import { useContractAddress } from "./useContractAddress";
+import { useCallback } from "react";
+import { zeroAddress } from "viem";
+import { useAccount, useReadContracts } from "wagmi";
+import {
+  governanceAbi,
+  useReadGovernanceGetAllUserDepositIds,
+} from "~/generated";
+import { useContractAddresses } from "./useContractAddress";
+
+type DepositInfo = {
+  depositAmount: bigint;
+  lockedUntil: bigint;
+};
 
 export const useDeposits = () => {
   const { address } = useAccount();
-  const contractAddress = useContractAddress(AppContract.Governance);
-  const governanceContract = {
-    address: contractAddress,
-    abi: governanceABI,
-  };
+  const contractAddresses = useContractAddresses();
 
   const {
     data: depositIds = [],
-    isLoading: isDepositIdsLoading,
+    isLoading: isLoadingDepositIds,
     refetch: refetchDepositIds,
-  } = useContractRead({
-    ...governanceContract,
-    functionName: "getAllUserDepositIds",
-    args: [address ?? "0x0"],
-    enabled: !!address,
-    keepPreviousData: true,
+  } = useReadGovernanceGetAllUserDepositIds({
+    address: contractAddresses.Governance,
+    args: [address ?? zeroAddress],
+    query: {
+      enabled: !!address,
+    },
   });
 
   const {
-    data: rawDeposits = [],
-    isLoading: isDepositInfoLoading,
+    data = [],
+    isLoading: isLoadingDepositInfo,
     refetch: refetchDepositInfo,
-  } = useContractReads({
+  } = useReadContracts({
     contracts: depositIds.map((depositId) => ({
-      ...governanceContract,
+      address: contractAddresses.Governance,
+      abi: governanceAbi,
       functionName: "depositInfo",
-      args: [address ?? "0x0", depositId],
+      args: [address ?? zeroAddress, depositId],
     })),
-    enabled: depositIds.length > 0,
-    keepPreviousData: true,
+    query: {
+      enabled: depositIds.length > 0,
+    },
   });
 
-  const deposits = (
-    rawDeposits as {
-      depositAmount: BigNumber;
-      lockedUntil: BigNumber;
-    }[]
-  )
-    .map(({ depositAmount, lockedUntil }, i) => ({
-      depositId: depositIds[i] ?? BigNumber.from(0),
-      amount: depositAmount,
-      unlockTimestamp: lockedUntil.toNumber(),
+  const deposits = data
+    .filter(({ result }) => !!result)
+    .map(({ result }, i) => ({
+      depositId: depositIds[i] ?? 0n,
+      amount: (result as unknown as DepositInfo).depositAmount,
+      unlockTimestamp: Number((result as unknown as DepositInfo).lockedUntil),
     }))
     .sort((a, b) => b.unlockTimestamp - a.unlockTimestamp);
 
+  const refetch = useCallback(async () => {
+    await refetchDepositIds();
+    await refetchDepositInfo();
+  }, [refetchDepositIds, refetchDepositInfo]);
+
   return {
     deposits,
-    isLoading: isDepositIdsLoading || isDepositInfoLoading,
-    refetch: async () => {
-      await refetchDepositIds();
-      await refetchDepositInfo();
-    },
+    isLoading: isLoadingDepositIds || isLoadingDepositInfo,
+    refetch,
   };
 };

@@ -1,120 +1,83 @@
-import { useMemo, useEffect, Fragment, useState } from "react";
-import type {
-  LinksFunction,
-  LoaderFunction,
-  MetaFunction,
-} from "@remix-run/node";
+import type { LoaderFunctionArgs } from "@remix-run/node";
 import { json } from "@remix-run/node";
+import type { ShouldRevalidateFunction } from "@remix-run/react";
 import {
   Links,
-  LiveReload,
   Meta,
   Outlet,
   Scripts,
-  useTransition,
+  ScrollRestoration,
   useFetchers,
   useLoaderData,
-  ScrollRestoration,
+  useNavigation,
 } from "@remix-run/react";
-import { resolveValue, Toaster } from "react-hot-toast";
-import { createClient, configureChains, WagmiConfig } from "wagmi";
-import { arbitrum, arbitrumGoerli } from "wagmi/chains";
-import { publicProvider } from "wagmi/providers/public";
-import { alchemyProvider } from "wagmi/providers/alchemy";
-import {
-  connectorsForWallets,
-  darkTheme,
-  getDefaultWallets,
-  RainbowKitProvider,
-} from "@rainbow-me/rainbowkit";
-import { trustWallet, ledgerWallet } from "@rainbow-me/rainbowkit/wallets";
-
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { ConnectKitProvider, getDefaultConfig } from "connectkit";
 import NProgress from "nprogress";
+import { useEffect, useMemo, useState } from "react";
+import { http, WagmiProvider, createConfig, fallback } from "wagmi";
+import { arbitrum, arbitrumSepolia } from "wagmi/chains";
 
-import { Transition } from "@headlessui/react";
-
-import { SpinnerIcon } from "./components/Icons";
-
-import rainbowStyles from "@rainbow-me/rainbowkit/styles.css";
-import tailwindStyles from "./styles/tailwind.css";
-import nProgressStyles from "./styles/nprogress.css";
-
-import type { Env } from "./types";
-import { ClientOnly } from "remix-utils";
+import { ENV } from "./lib/env.server";
+import { getDomainUrl } from "./lib/seo";
+import "./styles/nprogress.css";
+import "./styles/tailwind.css";
 import { Header } from "./components/Header";
-import {
-  CheckCircleIcon,
-  ExclamationCircleIcon,
-} from "@heroicons/react/24/outline";
+import { Toaster } from "./components/ui/Toast";
+import { APP_DESCRIPTION, APP_TITLE } from "./const";
 
-export const links: LinksFunction = () => [
-  { rel: "stylesheet", href: tailwindStyles },
-  { rel: "stylesheet", href: nProgressStyles },
-  { rel: "stylesheet", href: rainbowStyles },
-];
+const queryClient = new QueryClient();
 
-export const meta: MetaFunction = () => ({
-  charset: "utf-8",
-  title: "TreasureDAO Governance Staking",
-  viewport: "width=device-width,initial-scale=1",
-});
-
-const strictEntries = <T extends Record<string, any>>(
-  object: T
-): [keyof T, T[keyof T]][] => {
-  return Object.entries(object);
-};
-
-function getPublicKeys(env: Env): Env {
-  const publicKeys = {} as Env;
-  for (const [key, value] of strictEntries(env)) {
-    if (key.startsWith("PUBLIC_")) {
-      publicKeys[key] = value;
-    }
-  }
-  return publicKeys;
-}
-
-export const loader: LoaderFunction = async () => {
+export const loader = async ({ request }: LoaderFunctionArgs) => {
   return json({
-    ENV: getPublicKeys(process.env),
+    requestInfo: {
+      origin: getDomainUrl(request),
+      path: new URL(request.url).pathname,
+    },
+    env: {
+      PUBLIC_ENABLE_TESTNETS: ENV.PUBLIC_ENABLE_TESTNETS,
+      PUBLIC_THIRDWEB_CLIENT_ID: ENV.PUBLIC_THIRDWEB_CLIENT_ID,
+      PUBLIC_WALLET_CONNECT_PROJECT_ID: ENV.PUBLIC_WALLET_CONNECT_PROJECT_ID,
+    },
   });
 };
+
+export const shouldRevalidate: ShouldRevalidateFunction = () => {
+  return false;
+};
+
+export type RootLoader = typeof loader;
 
 export default function App() {
-  const { ENV } = useLoaderData<typeof loader>();
+  const { env } = useLoaderData<RootLoader>();
 
-  const [{ client, chains }] = useState(() => {
-    const testChains =
-      ENV.PUBLIC_ENABLE_TESTNETS === "true" ? [arbitrumGoerli] : [];
+  const [client] = useState(() =>
+    createConfig(
+      getDefaultConfig({
+        appName: APP_TITLE,
+        transports: {
+          [arbitrumSepolia.id]: fallback([
+            http(
+              `https://${arbitrumSepolia.id}.rpc.thirdweb.com/${env.PUBLIC_THIRDWEB_CLIENT_ID}`,
+            ),
+            http(),
+          ]),
+          [arbitrum.id]: fallback([
+            http(
+              `https://${arbitrum.id}.rpc.thirdweb.com/${env.PUBLIC_THIRDWEB_CLIENT_ID}`,
+            ),
+            http(),
+          ]),
+        },
+        walletConnectProjectId: env.PUBLIC_WALLET_CONNECT_PROJECT_ID,
+        chains: env.PUBLIC_ENABLE_TESTNETS
+          ? [arbitrumSepolia, arbitrum]
+          : [arbitrum],
+      }),
+    ),
+  );
 
-    const { chains, provider } = configureChains(
-      [arbitrum, ...testChains],
-      [alchemyProvider({ apiKey: ENV.PUBLIC_ALCHEMY_KEY }), publicProvider()]
-    );
-
-    const { wallets } = getDefaultWallets({
-      appName: "TreasureDAO Governance Staking",
-      chains,
-    });
-
-    const connectors = connectorsForWallets([
-      ...wallets,
-      {
-        groupName: "Others",
-        wallets: [trustWallet({ chains }), ledgerWallet({ chains })],
-      },
-    ]);
-
-    const client = createClient({
-      autoConnect: true,
-      connectors,
-      provider,
-    });
-
-    return { client, chains };
-  });
-  const transition = useTransition();
+  const transition = useNavigation();
 
   const fetchers = useFetchers();
 
@@ -127,34 +90,29 @@ export default function App() {
       if (states.every((state) => state === "idle")) return "idle";
       return "loading";
     },
-    [transition.state, fetchers]
+    [transition.state, fetchers],
   );
 
   // slim loading bars on top of the page, for page transitions
   useEffect(() => {
     if (state === "loading") NProgress.start();
     if (state === "idle") NProgress.done();
-  }, [state, transition.state]);
+  }, [state]);
 
   return (
-    <html lang="en">
+    <html lang="en" className="h-full">
       <head>
-        <title>TreasureDAO Governance Staking</title>
-        <meta
-          name="description"
-          content="Stake your MAGIC with a 7-day lockup period to earn gMAGIC voting power."
-        />
-
+        <title>{APP_TITLE}</title>
+        <meta name="description" content={APP_DESCRIPTION} />
+        <meta charSet="utf-8" />
+        <meta name="viewport" content="width=device-width,initial-scale=1" />
         <meta
           property="og:url"
           content="https://governance-staking.treasure.lol"
         />
         <meta property="og:type" content="website" />
-        <meta property="og:title" content="TreasureDAO Governance Staking" />
-        <meta
-          property="og:description"
-          content="Stake your MAGIC with a 7-day lockup period to earn gMAGIC voting power."
-        />
+        <meta property="og:title" content={APP_TITLE} />
+        <meta property="og:description" content={APP_DESCRIPTION} />
         <meta
           property="og:image"
           content="https://governance-staking.treasure.lol/banner.jpg"
@@ -169,11 +127,8 @@ export default function App() {
           property="twitter:url"
           content="https://governance-staking.treasure.lol"
         />
-        <meta name="twitter:title" content="TreasureDAO Governance Staking" />
-        <meta
-          name="twitter:description"
-          content="Stake your MAGIC with a 7-day lockup period to earn gMAGIC voting power."
-        />
+        <meta name="twitter:title" content={APP_TITLE} />
+        <meta name="twitter:description" content={APP_DESCRIPTION} />
         <meta
           name="twitter:image"
           content="https://governance-staking.treasure.lol/banner.jpg"
@@ -199,72 +154,21 @@ export default function App() {
         <link rel="mask-icon" href="/safari-pinned-tab.svg" color="#5bbad5" />
         <meta name="msapplication-TileColor" content="#ffc40d" />
         <meta name="theme-color" content="#ffffff" />
-        <meta name="viewport" content="width=device-width,initial-scale=1" />
+        <Meta />
         <Links />
       </head>
-      <body className="border-t-2 border-ruby-900 bg-night-900 antialiased selection:bg-honey-900">
-        <WagmiConfig client={client}>
-          <RainbowKitProvider
-            chains={chains}
-            theme={darkTheme({
-              accentColor: "#DC2626",
-            })}
-          >
-            <Header />
-            <Outlet />
-          </RainbowKitProvider>
-        </WagmiConfig>
-        <Toaster position="bottom-left" reverseOrder={false} gutter={18}>
-          {(t) => (
-            <Transition
-              show={t.visible}
-              as={Fragment}
-              enter="transform ease-out duration-300 transition"
-              enterFrom="translate-y-2 opacity-0 sm:translate-y-0 sm:translate-x-2"
-              enterTo="translate-y-0 opacity-100 sm:translate-x-0"
-              leave="transition ease-in duration-100"
-              leaveFrom="opacity-100"
-              leaveTo="opacity-0"
-            >
-              <div className="pointer-events-auto w-full max-w-sm overflow-hidden rounded-lg bg-gray-800 shadow-lg ring-1 ring-black ring-opacity-5">
-                <div className="p-4">
-                  <div className="flex items-center justify-center">
-                    <div className="flex-shrink-0">
-                      {(() => {
-                        switch (t.type) {
-                          case "success":
-                            return (
-                              <CheckCircleIcon className="h-6 w-6 text-green-500" />
-                            );
-                          case "error":
-                            return (
-                              <ExclamationCircleIcon className="h-6 w-6 text-red-500" />
-                            );
-                          case "loading":
-                            return (
-                              <SpinnerIcon className="h-6 w-6 animate-spin fill-gray-800 text-yellow-500" />
-                            );
-                          default:
-                            return (
-                              <CheckCircleIcon className="h-6 w-6 text-yellow-500" />
-                            );
-                        }
-                      })()}
-                    </div>
-                    <div className="ml-3 w-0 flex-1">
-                      <div className="text-sm text-white">
-                        {resolveValue(t.message, t)}
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </Transition>
-          )}
-        </Toaster>
+      <body className="h-full antialiased">
+        <WagmiProvider config={client}>
+          <QueryClientProvider client={queryClient}>
+            <ConnectKitProvider theme="midnight">
+              <Header />
+              <Outlet />
+            </ConnectKitProvider>
+          </QueryClientProvider>
+        </WagmiProvider>
         <Scripts />
         <ScrollRestoration />
-        <LiveReload />
+        <Toaster />
       </body>
     </html>
   );
